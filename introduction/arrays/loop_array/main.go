@@ -4,6 +4,8 @@ import "fmt"
 
 func main() {
 	var numbers [5]int
-	numbers[0] = 10
+	for i := 0; i < len(numbers); i++ {
+		numbers[i] = i * 2
+	}
 	fmt.Println(numbers)
 }
