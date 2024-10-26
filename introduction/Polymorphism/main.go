@@ -34,10 +34,10 @@ type RemoteLogger struct {
 }
 
 func (rl RemoteLogger) Log(message string) {
-	fmt.Println("Remote Logger to %s: %s\n", rl.Endpoint, message)
+	fmt.Printf("Remote Logger to %s: %s\n", rl.Endpoint, message)
 }
 
-func LogMessages(loggers []logger, message string) {
+func LogMessages(loggers []Logger, message string) {
 	for _, logger := range loggers {
 		logger.Log(message)
 	}
