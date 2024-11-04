@@ -50,3 +50,32 @@ func TransformData(transaction Transaction) Transaction {
 		fmt.Printf("Transformed transaction %d to %.2f %s \n", transaction.ID, transaction.Amount, transaction.Currency)
 	}
 }
+
+func Worker(id int, transactions <-chan Transaction, store *DataStore, wg *sync.WaitGroup) {
+	defer wg.Done()
+	for transaction := range transactions {
+		transformedTransaction := TransformData(transaction)
+		store.AddTransaction(transformedTransaction)
+	}
+}
+
+func main() {
+	rand.Seed(time.Now().UnixNano())
+	var wg sync.WaitGroup
+	transactions := make(chan Transaction, 10)
+	store := &DataStore{}
+	for i := 1; i <= 3; i++ {
+		wg.Add(1)
+		go FetchData(i, transactions, &wg)
+	}
+	for i := 1; i <= 2; i++ {
+		wg.Add(1)
+		go Worker(i, transactions, store, &wg)
+	}
+	go func() {
+		wg.Wait()
+		close(transactions)
+	}()
+	time.Sleep(time.Second * 5)
+	fmt.Println("Data Ingestion and transformation pipeline completed.")
+}
