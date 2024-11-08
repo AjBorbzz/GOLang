@@ -38,13 +38,30 @@ func HomePageHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func AboutPageHandler(w http.ResponseWriter, r *http.Request) {
+	data := PageData{
+		Title:   "About Us",
+		Heading: "About Our Website",
+		Message: "Learn more about what we do and our mission.",
+	}
+	tmpl, err := template.ParseFiles("about.html")
+	if err != nil {
+		http.Error(w, "Error loading template", http.StatusInternalServerError)
+		return
+	}
+	err = tmpl.Execute(w, data)
+	if err != nil {
+		http.Error(w, "Error rendering template", http.StatusInternalServerError)
+	}
+}
+
 func main() {
 	// Initialize Gorilla Mux router
 	r := mux.NewRouter()
 
 	// Define the route for the homepage
 	r.HandleFunc("/", HomePageHandler)
-
+	r.HandleFunc("/about", AboutPageHandler)
 	// Start the web server
 	fmt.Println("Server started at http://localhost:8080")
 	http.ListenAndServe(":8080", r)
